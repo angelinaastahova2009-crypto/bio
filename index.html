@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Заголовок страницы во вкладке браузера -->
+    <title>Астахова Ангелина · Обо мне</title>
+    <meta name="description" content="Краткая личная биография: откуда я родом, где живу и учусь, мои друзья и увлечения.">
+
+    <!-- Подключение шрифтов Lora и Inter с резервными системными шрифтами -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:wght@500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* =====================================================================
+           БАЗОВЫЕ ПЕРЕМЕННЫЕ И СБРОС СТИЛЕЙ
+           Используется только нормальный поток документа (Flexbox и Grid),
+           без absolute/fixed позиционирования, чтобы блоки никогда не наслаивались.
+        ====================================================================== */
+        :root {
+            --bg-page: #0f1115;
+            --bg-card: #191c24;
+            --bg-card-hover: #1e222c;
+            --border-card: #262b36;
+            --text-main: #e6e8ec;
+            --text-muted: #9ca3af;
+            --accent: #d4a373;
+            --accent-soft: rgba(212, 163, 115, 0.14);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* =====================================================================
+           ЦЕНТРИРОВАННЫЙ КОНТЕЙНЕР СТРАНИЦЫ
+        ====================================================================== */
+        .page-container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 48px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* =====================================================================
+           1. ВЕРХНЯЯ ПАНЕЛЬ С КНОПКОЙ КОПИРОВАНИЯ ССЫЛКИ
+        ====================================================================== */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-card);
+        }
+
+        .page-label {
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
+            padding: 9px 16px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--bg-card-hover);
+            border-color: #353c4b;
+        }
+
+        .copy-btn.copied {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .copy-btn svg {
+            width: 15px;
+            height: 15px;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        /* =====================================================================
+           2. ШАПКА ПРОФИЛЯ (ФОТО СЛЕВА, ИНФОРМАЦИЯ СПРАВА)
+        ====================================================================== */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .photo-wrapper {
+            flex-shrink: 0;
+            width: 148px;
+            height: 148px;
+        }
+
+        .profile-photo {
+            width: 148px;
+            height: 148px;
+            border-radius: 20px;
+            object-fit: cover;
+            object-position: top;
+            border: 1px solid #2d3342;
+            display: block;
+        }
+
+        /* Заглушка с инициалами «АА», если файл photo.jpg отсутствует */
+        .photo-fallback {
+            width: 148px;
+            height: 148px;
+            border-radius: 20px;
+            background-color: var(--bg-card);
+            border: 1px solid #2d3342;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+        }
+
+        .photo-fallback-initials {
+            font-family: 'Lora', Georgia, serif;
+            font-size: 36px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            line-height: 1.1;
+        }
+
+        .photo-fallback-caption {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            letter-spacing: 0.05em;
+        }
+
+        .profile-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .profile-name {
+            font-family: 'Lora', Georgia, serif;
+            font-size: 32px;
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .profile-city {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .profile-intro {
+            font-size: 14.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* =====================================================================
+           ОБЩИЕ ЗАГОЛОВКИ СЕКЦИЙ С АКЦЕНТНОЙ ТОЧКОЙ
+        ====================================================================== */
+        .section-block {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .section-title {
+            font-family: 'Lora', Georgia, serif;
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        /* =====================================================================
+           3. КАРТОЧКА «НЕМНОГО ОБО МНЕ»
+        ====================================================================== */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 24px 28px;
+        }
+
+        .about-text p {
+            font-size: 15px;
+            color: var(--text-main);
+            line-height: 1.7;
+        }
+
+        .about-text p + p {
+            margin-top: 14px;
+        }
+
+        /* =====================================================================
+           4. СЕТКА ФАКТОВ О ЖИЗНИ (2 КОЛОНКИ + 3-Я НА ВСЮ ШИРИНУ)
+        ====================================================================== */
+        .facts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .fact-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .fact-card-wide {
+            grid-column: 1 / -1;
+        }
+
+        .fact-header {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: var(--accent);
+        }
+
+        .fact-header svg {
+            width: 17px;
+            height: 17px;
+            flex-shrink: 0;
+        }
+
+        .fact-title {
+            font-family: 'Lora', Georgia, serif;
+            font-size: 16.5px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .fact-text {
+            font-size: 14.5px;
+            color: var(--text-muted);
+            line-height: 1.65;
+        }
+
+        /* =====================================================================
+           5. СЕКЦИЯ «ХОББИ И УВЛЕЧЕНИЯ» (СЕТКА 3x2)
+        ====================================================================== */
+        .hobbies-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .hobby-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 16px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .hobby-badge {
+            width: 24px;
+            height: 3px;
+            border-radius: 2px;
+            background-color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .hobby-title {
+            font-family: 'Lora', Georgia, serif;
+            font-size: 15.5px;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.35;
+        }
+
+        .hobby-desc {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        /* =====================================================================
+           6. НИЖНИЙ КОЛОНТИТУЛ
+        ====================================================================== */
+        .page-footer {
+            margin-top: 8px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-card);
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* =====================================================================
+           АДАПТИВНОСТЬ ДЛЯ ПЛАНШЕТОВ И СМАРТФОНОВ
+        ====================================================================== */
+        @media (max-width: 720px) {
+            .hobbies-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .page-container {
+                padding: 32px 16px;
+                gap: 24px;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 24px 20px;
+                gap: 20px;
+            }
+
+            .profile-name {
+                font-size: 28px;
+            }
+
+            .card, .fact-card {
+                padding: 22px 20px;
+            }
+
+            .facts-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+
+        @media (max-width: 440px) {
+            .hobbies-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top-bar {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="page-container">
+
+        <!-- 1. ВЕРХНЯЯ ПАНЕЛЬ С КНОПКОЙ КОПИРОВАНИЯ ССЫЛКИ -->
+        <div class="top-bar">
+            <span class="page-label">Личная страница</span>
+            <button type="button" class="copy-btn" id="copy-link-btn" onclick="copyPageLink()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                </svg>
+                <span id="copy-btn-text">Скопировать ссылку на страницу</span>
+            </button>
+        </div>
+
+        <!-- 2. ШАПКА ПРОФИЛЯ -->
+        <header class="profile-header">
+            <div class="photo-wrapper">
+                <!-- Фотография профиля: положите файл photo.jpg в ту же папку, что и index.html -->
+                <img
+                    src="photo.jpg"
+                    alt="Астахова Ангелина"
+                    id="profile-photo"
+                    class="profile-photo"
+                    onerror="handlePhotoError()"
+                >
+                <!-- Заглушка с инициалами, если файл photo.jpg ещё не загружен в папку -->
+                <div id="photo-fallback" class="photo-fallback" aria-label="Астахова Ангелина">
+                    <span class="photo-fallback-initials">АА</span>
+                    <span class="photo-fallback-caption">photo.jpg</span>
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <h1 class="profile-name">Астахова Ангелина</h1>
+                <div class="profile-city">Пенза</div>
+                <p class="profile-intro">
+                    Небольшая страница обо мне: где я родилась и живу, как прошли мои школьные годы, кто рядом со мной и чем я люблю заниматься в свободное время.
+                </p>
+            </div>
+        </header>
+
+        <!-- 3. СЕКЦИЯ «НЕМНОГО ОБО МНЕ» -->
+        <section class="section-block" aria-labelledby="about-heading">
+            <h2 class="section-title" id="about-heading">
+                <span class="section-dot" aria-hidden="true"></span>
+                <span>Немного обо мне</span>
+            </h2>
+            <div class="card about-text">
+                <p>
+                    По натуре я открытый и жизнерадостный человек: искренне люблю живое общение, интересные события и насыщенные дни в компании близких по духу людей, после которых остаётся много тёплых воспоминаний. Мне легко увлечься новой идеей и поддержать общую инициативу.
+                </p>
+                <p>
+                    При этом для меня очень важен внутренний баланс — после активного общения и насыщенных мероприятий мне обязательно нужно спокойное время наедине с собой, чтобы отдохнуть, побыть в тишине, заняться творчеством и восстановить силы.
+                </p>
+            </div>
+        </section>
+
+        <!-- 4. СЕТКА ФАКТОВ О ЖИЗНИ -->
+        <section class="section-block" aria-labelledby="facts-heading">
+            <h2 class="section-title" id="facts-heading">
+                <span class="section-dot" aria-hidden="true"></span>
+                <span>История и окружение</span>
+            </h2>
+
+            <div class="facts-grid">
+                <!-- Карточка 1: Откуда родом и где живу -->
+                <article class="fact-card">
+                    <div class="fact-header">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <h3 class="fact-title">Откуда родом и где живу</h3>
+                    </div>
+                    <p class="fact-text">
+                        Родилась и живу в Пензе. Это мой родной город, с которым связана вся моя жизнь — без переездов, с привычными маршрутами, любимыми местами для прогулок и ощущением дома.
+                    </p>
+                </article>
+
+                <!-- Карточка 2: Школа и старт -->
+                <article class="fact-card">
+                    <div class="fact-header">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        <h3 class="fact-title">Школа и старт</h3>
+                    </div>
+                    <p class="fact-text">
+                        Училась в Гимназии № 216 «Дидакт» города Заречного. Школьные годы прошли очень насыщенно: я участвовала в мероприятиях проекта «Школа Росатома», научных конференциях, форумах и творческих выступлениях. Школа дала сильный старт для дальнейшего обучения и жизни.
+                    </p>
+                </article>
+
+                <!-- Карточка 3: Друзья и окружение (на всю ширину сетки) -->
+                <article class="fact-card fact-card-wide">
+                    <div class="fact-header">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                        <h3 class="fact-title">Друзья и окружение</h3>
+                    </div>
+                    <p class="fact-text">
+                        Рядом со мной надёжные и близкие друзья, с которыми легко разделить и весёлые встречи, и спокойные разговоры. Я очень ценю искренность, взаимную поддержку и людей, с которыми можно оставаться собой.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <!-- 5. СЕКЦИЯ «ХОББИ И УВЛЕЧЕНИЯ» (СЕТКА 3x2) -->
+        <section class="section-block" aria-labelledby="hobbies-heading">
+            <h2 class="section-title" id="hobbies-heading">
+                <span class="section-dot" aria-hidden="true"></span>
+                <span>Хобби и увлечения</span>
+            </h2>
+
+            <div class="hobbies-grid">
+                <!-- Хобби 1 -->
+                <article class="hobby-card">
+                    <div class="hobby-badge" aria-hidden="true"></div>
+                    <h3 class="hobby-title">Раскраски Hachette</h3>
+                    <p class="hobby-desc">
+                        Детализированные иллюстрации, которые помогают переключиться и отдохнуть.
+                    </p>
+                </article>
+
+                <!-- Хобби 2 -->
+                <article class="hobby-card">
+                    <div class="hobby-badge" aria-hidden="true"></div>
+                    <h3 class="hobby-title">Картины по номерам</h3>
+                    <p class="hobby-desc">
+                        Спокойный творческий процесс и радость от готовой работы.
+                    </p>
+                </article>
+
+                <!-- Хобби 3 -->
+                <article class="hobby-card">
+                    <div class="hobby-badge" aria-hidden="true"></div>
+                    <h3 class="hobby-title">Алмазная мозаика</h3>
+                    <p class="hobby-desc">
+                        Кропотливая работа с мелкими деталями, требующая внимания и усидчивости.
+                    </p>
+                </article>
+
+                <!-- Хобби 4 -->
+                <article class="hobby-card">
+                    <div class="hobby-badge" aria-hidden="true"></div>
+                    <h3 class="hobby-title">Художественная литература</h3>
+                    <p class="hobby-desc">
+                        Чтение книг с увлекательными сюжетами и запоминающейся атмосферой.
+                    </p>
+                </article>
+
+                <!-- Хобби 5 -->
+                <article class="hobby-card">
+                    <div class="hobby-badge" aria-hidden="true"></div>
+                    <h3 class="hobby-title">Фигурное катание</h3>
+                    <p class="hobby-desc">
+                        С интересом слежу за соревнованиями, программами и техникой фигуристов.
+                    </p>
+                </article>
+
+                <!-- Хобби 6 -->
+                <article class="hobby-card">
+                    <div class="hobby-badge" aria-hidden="true"></div>
+                    <h3 class="hobby-title">Художественная гимнастика</h3>
+                    <p class="hobby-desc">
+                        Вдохновляюсь грацией, артистизмом и сложными выступлениями спортсменок.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <!-- 6. НИЖНИЙ КОЛОНТИТУЛ -->
+        <footer class="page-footer">
+            Астахова Ангелина · 2026
+        </footer>
+
+    </main>
+
+    <script>
+        let copyResetTimer = null;
+
+        /**
+         * Показывает стильную заглушку с инициалами «АА», если файл photo.jpg не найден
+         */
+        function handlePhotoError() {
+            const img = document.getElementById('profile-photo');
+            const fallback = document.getElementById('photo-fallback');
+            if (img && fallback) {
+                img.style.display = 'none';
+                fallback.style.display = 'flex';
+            }
+        }
+
+        /**
+         * Копирует текущий адрес страницы в буфер обмена
+         * и меняет текст кнопки на «Ссылка скопирована ✓» на 2 секунды
+         */
+        function copyPageLink() {
+            const url = window.location.href;
+            const btn = document.getElementById('copy-link-btn');
+            const btnText = document.getElementById('copy-btn-text');
+
+            const textArea = document.createElement('textarea');
+            textArea.value = url;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                btn.classList.add('copied');
+                btnText.textContent = 'Ссылка скопирована ✓';
+
+                clearTimeout(copyResetTimer);
+                copyResetTimer = setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btnText.textContent = 'Скопировать ссылку на страницу';
+                }, 2000);
+            } catch (e) {
+                btnText.textContent = 'Не удалось скопировать';
+            }
+
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
